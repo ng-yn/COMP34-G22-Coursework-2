@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+<body>
+<br>
+    <h1>{{ title }}</h1>
+    <h6>Search for other users!</h6>
+    <form class="d-flex" action="{{ url_for('profile.display_profiles') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+           name="search_term">
+    <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+    <br>
+    <h3>Community Forum</h3>
+    <h5>Post your thoughts and ideas for others to see!</h5>
+    <h6>
+        <a href="{{url_for('community_bp.create')}}">
+        <button class="btn btn-primary">New Post</button>
+        </a>
+    </h6>
+{% for post in posts %}
+        <hr>
+        <a href="{{ url_for('community_bp.post', post_id=post['id']) }}">
+            <button class="btn btn-secondary">
+                <h5>{{ post['title'] }}</h5>
+            </button>
+        </a>
+        <span class="badge badge-primary">{{ post['created'] }}</span>
+        <a href="{{ url_for('community_bp.edit', post_id=post['id']) }}">
+            <span class="badge badge-warning">Edit</span>
+        </a>
+{% endfor %}
+{% endblock %}
+</body>

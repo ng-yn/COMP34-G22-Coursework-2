@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% set title = 'Profile' %}
+{% from "_formhelpers.html" import render_field %}
+{% block content %}
+<br>
+
+<h2>Create Profiles</h2>
+<h4>Create a profile to access community features!</h4>
+
+<div class="row justify-content-center align-items-center">
+    <div class="container col-10">
+        <div class="card" style="bg-light">
+            <div class="card-body">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <div class="row">
+                        {{ form.csrf_token }}
+                        <div class="col-4">
+                            <h5 style="text-align:center">Profile Picture</h5>
+
+                            <img class="rounded-circle profile_img center"
+                                 src="/static/profilepics/default.jpg">
+                            <hr>
+
+                            {{ render_field(form.picture, class="form-control-file") }}
+                        </div>
+
+                        <div class="col-8">
+                            <dl>
+                                {{ render_field(form.username, class="form-control") }}
+                                <hr>
+                                {{ render_field(form.bio, class="form-control") }}
+                            </dl>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% from "_formhelpers.html" import render_field %}
+{% extends 'layout.html' %}
+{% block content %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<h1>{{ title }}</h1>
+<p>Search for historical stock data</p>
+
+<div class="row justify-content-center align-items-center">
+    <div class="container col-6">
+        <div class="card" style="bg-light">
+            <div class="card-body">
+                <form method="POST" action="search" name="autocomplete_tickers">
+                    {{ form.csrf_token }}
+{#                    {{ render_field(form.stock) }}#}
+                    <p>Search for S&P500 stock data</p>
+                    <input style="width: 500px" name="autocomplete_tickers" type="search" placeholder="Enter a company symbol" id="autocomplete_tickers"
+                        class="form-control input-lg"/>
+                    <button class="btn btn-primary btn-block" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{#<form style="margin-top: 24px" action={{ url_for("snp500_bp.add_ticker") }} method="POST">#}
+{#    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>#}
+{#  </form>#}
+
+    <!-- script for autocomplete -->
+  <script type="text/javascript">
+
+      $(function () {
+          $("#autocomplete_tickers").autocomplete({
+              source: function (request, response) {
+                  $.getJSON("{{url_for('snp500_bp.autocomplete_tickers')}}", {
+                      ticker: request.term,
+                  }, function (data) {
+                      response(data);
+                  });
+              },
+              minLength: 1,
+          });
+      })
+  </script>
+{% endblock %}

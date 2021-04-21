@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% set title = 'Profile Display' %}
+{% from "_formhelpers.html" import render_field %}
+{% block content %}
+<br>
+<h2>Search Results</h2>
+<a href="/community">< Return to the Community Page</a>
+    {% for result in profiles %}
+<hr>
+        <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <a class="card-title" href="{{ result.username }}"> {{ result.username }}</a>
+                </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+</head>
+<body>
+<header>
+    {% include 'navigation.html' %}
+</header>
+<style>
+        .demo-wrap {
+          position: relative;
+        }
+        .demo-wrap:before {
+          content: ' ';
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100vmax;
+          height: 100vmax;
+          opacity: 0.5;
+          background-image: url(https://wallpaperaccess.com/full/2927307.jpg);
+          background-repeat: no-repeat;
+          background-position: 50% 0;
+            background-attachment: fixed;
+          background-size: cover;
+          z-index: -1;
+        }
+        .demo-content {
+          position: relative;
+        }
+
+        .button {
+        border: none;
+        outline: 0;
+        display: inline-block;
+        padding: 8px;
+        color: #fdfdfe;
+        background-color: #4e555b;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        }
+        .profile_img {
+        border: 2px solid black;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 200px;
+        width: 200px;
+</style>
+<main>
+    <div class="demo-wrap">
+        <div class="demo-content">
+        </div>
+        {# Displays flashed messages on a page #}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="container-fluid bg-dark text-white">
+            <p>
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </p>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+</main>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}">
+</script>
+
+</body>
+</html>

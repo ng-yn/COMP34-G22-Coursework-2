@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<br>
+<div class="card">
+    <div class="card-body">
+        <a href="/community">< Return to the Community Section</a>
+    <h2>{% block title %}
+    {{ post['title'] }}
+    {% endblock %}</h2>
+        <p><span>Posted by: </span><a href="/profile/{{ profile['username'] }}"><span class="badge badge-primary">{{ profile['username'] }}</span></a>
+        </p>
+    <hr>
+    <p>{{ post['content'] }}</p>
+    </div>
+
+</div>
+
+{% endblock %}

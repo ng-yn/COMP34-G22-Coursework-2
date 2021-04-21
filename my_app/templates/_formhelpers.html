@@ -1,0 +1,14 @@
+{# Template for Sign up form and validation errors #}
+{% macro render_field(field) %}
+<dt><h5>{{ field.label }}</h5>
+  <dd>
+  {{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <li style="list-style-type:none;" class=errors>
+    {% for error in field.errors %}
+      <p style="color:#FF0000">{{ error }}</p>
+    {% endfor %}
+    </li>
+  {% endif %}
+  </dd>
+{% endmacro %}

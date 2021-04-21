@@ -1,0 +1,27 @@
+{% from "_formhelpers.html" import render_field %}
+{% extends 'layout.html' %}
+{% block content %}
+<h1 style="text-align:center">Log In</h1>
+<h4 style="text-align:center">Log in to an existing account</h4>
+
+<div class="row justify-content-center align-items-center">
+    <div class="container col-6">
+        <div class="card" style="bg-light">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('login_bp.login') }}">
+                    {{ form.csrf_token }}
+                    {{ render_field(form.email)}}
+                    {{ render_field(form.password) }} <br>
+                    <button class="btn btn-primary btn-block" type="submit">Log In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center align-items-center">
+    <p>Don't have an account yet? Click <a href="/signup">here</a> to register</p>
+</div>
+
+
+
+{% endblock %}
