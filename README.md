@@ -1,1 +1,1 @@
-# COMP34-G22-Coursework-2
+# coursework-2-groups-group-22-comp0034 
