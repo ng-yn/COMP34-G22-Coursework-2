@@ -1,3 +1,4 @@
+import multiprocessing
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,11 @@ from my_app import db as _db
 from my_app.config import TestingConfig
 import pandas as pd
 import selenium
+from selenium import webdriver
+from selenium.webdriver import ChromeOptions
+from selenium.webdriver import Chrome
+#
+# driver = webdriver.Chrome(executable_path='../drivers/chromedriver.exe')
 
 
 @pytest.fixture(scope='session')
@@ -30,12 +36,8 @@ def client(app):
 
 @pytest.fixture(scope='session')
 def db(app):
-    """
-    returns a session wide database using a flask-sqlalchemy database connection.
-    """
+    """Using the current database for testing session as database is too large to clone every test"""
     _db.app = app
-    # add the local authority data to the database (this is a workaround you don't need this for your coursework!)
-
     yield _db
 
 # @pytest.fixture(scope='session')
@@ -63,9 +65,10 @@ def session(db):
 
 @pytest.fixture(scope='function')
 def user(db):
-    """ creates a user without a profile. """
+    """ Creates a user without a profile. ID must be included so @login_required decorators won't block the tests """
     from my_app.models import User
-    user = User(username="testuser", email='testuser@gmail.com')
+    count = User.query.count()
+    user = User(id=count+1, username="testuser", email='testuser@gmail.com')
     user.set_password('password1')
     db.session.add(user)
     db.session.commit()
@@ -84,8 +87,8 @@ def user(db):
 #     options = ChromeOptions()
 #     options.add_argument("--no-sandbox")
 #     options.add_argument("--disable-dev-shm-usage")
-#     options.add_argument("--headless")
-#     options.add_argument("--window-size=1920,1080")
+#     # options.add_argument("--headless")
+#     # options.add_argument("--window-size=1920,1080")
 #     chrome_driver = webdriver.Chrome(options=options)
 #     request.cls.driver = chrome_driver
 #     yield

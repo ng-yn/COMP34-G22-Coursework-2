@@ -19,9 +19,6 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f"{self.id} {self.username} {self.email} {self.password} {self.image_file}"
 
-    def is_authenticated(self):
-        return True
-
     def set_password(self, password):
         self.password = generate_password_hash(password)
 

@@ -8,10 +8,9 @@ from my_app import create_app, db
 from my_app.config import TestingConfig
 import pytest
 
-valid_user = {'email: l@l', 'password: llll'}
-
 
 def login(client, email, password):
+    """Function to login a user"""
     return client.post('/login/', data=dict(
         email=email,
         password=password
@@ -19,10 +18,12 @@ def login(client, email, password):
 
 
 def logout(client):
+    """Function to logout a user"""
     return client.get('/logout', follow_redirects=True)
 
 
-class Testmyapp:
+class TestAuth:
+    """ Tests for authentication (signup, login, logout etc.) """
     def test_home_page_valid(self, client):
         """
         GIVEN a Flask application is running
@@ -32,13 +33,22 @@ class Testmyapp:
         response = client.get('/')
         assert response.status_code == 200
 
-    def test_profile_not_allowed_when_user_not_logged_in(self, client):
+    def test_pages_require_login(self, client):
         """
         GIVEN A user is not logged in
         WHEN When they access the profile menu option
         THEN they should be redirected to the login page
         """
+        response = client.get('/watchlist', follow_redirects=True)
+        assert response.status_code == 200
+        assert b'You must be logged in to view that page.' in response.data
+        response = client.get('/community', follow_redirects=True)
+        assert response.status_code == 200
+        assert b'You must be logged in to view that page.' in response.data
         response = client.get('/profile', follow_redirects=True)
+        assert response.status_code == 200
+        assert b'You must be logged in to view that page.' in response.data
+        response = client.get('/logout', follow_redirects=True)
         assert response.status_code == 200
         assert b'You must be logged in to view that page.' in response.data
 
@@ -61,50 +71,30 @@ class Testmyapp:
         assert response.status_code == 200
         assert b'user2' in response.data
         assert count2 - count == 1
+        assert b'Hello, user2. You have successfully signed up. Please login to continue.'
 
+    @pytest.mark.usefixtures('user')
     def test_login(self, client):
         """
         GIVEN A user is registered
         WHEN When they login
         THEN they the should be redirected to the home page and flashed with a login message
         """
-        from my_app.models import User
-        response = client.post('/login/', data=dict(
-            email='testuser@gmail.com',
-            password='password1'
-        ), follow_redirects=True)
+        response = login(client, 'testuser@gmail.com', 'password1')
         assert response.status_code == 200
-        assert b'testuser' in response.data
+        assert b'Hello, testuser. You have successfully logged in.' in response.data
 
-    # def test_logout(self, client):
-    #     """
-    #     GIVEN A user is logged in
-    #     WHEN When they logout
-    #     THEN they the should be redirected to the home page and flashed with a logout message
-    #     """
-    #     from my_app.models import User
-    #     with client:
-    #         response = login(client, 'testuser@gmail.com', 'password1')
-    #         assert b'testuser' in response.data
-    #         response = logout(client)
-    #         assert response.status_code == 200
-    #         assert b'logged in' in response.data
-
+    @pytest.mark.usefixtures('user')
     def test_logout(self, client):
         """
         GIVEN A user is logged in
         WHEN When they logout
         THEN they the should be redirected to the home page and flashed with a logout message
         """
-        client.post('/signup/', data=dict(
-            username='user2',
-            email='person_2@people.com',
-            password='password2',
-            password_repeat='password2'
-        ), follow_redirects=True)
+        response = login(client, 'testuser@gmail.com', 'password1')
+        assert response.status_code == 200
+        assert b'Hello, testuser. You have successfully logged in.' in response.data
+        response = logout(client)
+        assert response.status_code == 200
+        assert b'You have successfully logged out.' in response.data
 
-        with client:
-            login(client, 'person_2@people.com', 'password2')
-            response = logout(client)
-            assert response.status_code == 200
-            assert b'You have successfully logged out.' in response.data
