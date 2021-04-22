@@ -7,7 +7,7 @@ db = SQLAlchemy()
 scratch = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-csrf.exempt_views.add('dash.dash.dispatch')  # Flask bug, included this so that the dash callbacks are working
+csrf._exempt_views.add('dash.dash.dispatch')  # Flask bug, included this so that the dash callbacks are working
 
 
 def create_app(config_classname):

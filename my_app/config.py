@@ -1,6 +1,7 @@
 """Flask config class."""
 from pathlib import Path
 
+
 class Config(object):
     DEBUG = False
     SECRET_KEY = 'nZ2d3HLMrP97UqvibLyFIw'  # Used for session cookies
@@ -19,7 +20,11 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
 
+
 class TestingConfig(Config):
     ENV = 'testing'
     TESTING = True
+    DEBUG = True
     SQLALCHEMY_ECHO = True
+    WTF_CSRF_ENABLED = False
+

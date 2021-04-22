@@ -1,11 +1,25 @@
+import time
 from unittest import TestCase
 
-from flask_login import logout_user
+from flask_login import logout_user, LoginManager
 from flask_login import login_user
 
 from my_app import create_app, db
 from my_app.config import TestingConfig
 import pytest
+
+valid_user = {'email: l@l', 'password: llll'}
+
+
+def login(client, email, password):
+    return client.post('/login/', data=dict(
+        email=email,
+        password=password
+    ), follow_redirects=True)
+
+
+def logout(client):
+    return client.get('/logout', follow_redirects=True)
 
 
 class Testmyapp:
@@ -26,9 +40,9 @@ class Testmyapp:
         """
         response = client.get('/profile', follow_redirects=True)
         assert response.status_code == 200
-        assert b'/login' in response.data
+        assert b'You must be logged in to view that page.' in response.data
 
-    def test_signup_succeeds(self,client):
+    def test_signup_succeeds(self, client):
         """
         GIVEN A user is not registered
         WHEN When they submit a valid registration form
@@ -37,25 +51,25 @@ class Testmyapp:
         """
         from my_app.models import User
         count = User.query.count()
-        response = client.post('/signup', data=dict(
+        response = client.post('/signup/', data=dict(
             username='user2',
             email='person_2@people.com',
             password='password2',
             password_repeat='password2'
         ), follow_redirects=True)
         count2 = User.query.count()
-        assert count2 - count == 1
         assert response.status_code == 200
         assert b'user2' in response.data
+        assert count2 - count == 1
 
     def test_login(self, client):
         """
         GIVEN A user is registered
         WHEN When they login
-        THEN they the should be redirected to the home page with a login message
+        THEN they the should be redirected to the home page and flashed with a login message
         """
         from my_app.models import User
-        response = client.post('/login', data=dict(
+        response = client.post('/login/', data=dict(
             email='testuser@gmail.com',
             password='password1'
         ), follow_redirects=True)
@@ -66,10 +80,31 @@ class Testmyapp:
     #     """
     #     GIVEN A user is logged in
     #     WHEN When they logout
-    #     THEN they the should be redirected to the home page with a logout message
+    #     THEN they the should be redirected to the home page and flashed with a logout message
     #     """
-    #     login_user('testuser')
-    #
-    #     response = client.post('/logout', follow_redirects=True)
-    #     assert response.status_code == 200
-    #     assert b'successfully' in response.data
+    #     from my_app.models import User
+    #     with client:
+    #         response = login(client, 'testuser@gmail.com', 'password1')
+    #         assert b'testuser' in response.data
+    #         response = logout(client)
+    #         assert response.status_code == 200
+    #         assert b'logged in' in response.data
+
+    def test_logout(self, client):
+        """
+        GIVEN A user is logged in
+        WHEN When they logout
+        THEN they the should be redirected to the home page and flashed with a logout message
+        """
+        client.post('/signup/', data=dict(
+            username='user2',
+            email='person_2@people.com',
+            password='password2',
+            password_repeat='password2'
+        ), follow_redirects=True)
+
+        with client:
+            login(client, 'person_2@people.com', 'password2')
+            response = logout(client)
+            assert response.status_code == 200
+            assert b'You have successfully logged out.' in response.data

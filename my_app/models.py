@@ -7,7 +7,7 @@ from my_app import db
 
 class User(UserMixin, db.Model):
     # ONLY USE THIS FOR THE FIRST INSTANCE OF THE DATABASE
-    __tablename__ = "user"
+    # __tablename__ = "user"
     # id = db.Column(db.Integer, primary_key=True)
     # username = db.Column(db.Text, nullable=False)
     # email = db.Column(db.Text, unique=True, nullable=False)
@@ -18,6 +18,9 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"{self.id} {self.username} {self.email} {self.password} {self.image_file}"
+
+    def is_authenticated(self):
+        return True
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
