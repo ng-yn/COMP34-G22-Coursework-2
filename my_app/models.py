@@ -1,19 +1,18 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-
 from my_app import db
 
 
 class User(UserMixin, db.Model):
     # ONLY USE THIS FOR THE FIRST INSTANCE OF THE DATABASE
-    __tablename__ = "user"
-    # id = db.Column(db.Integer, primary_key=True)
-    # username = db.Column(db.Text, nullable=False)
-    # email = db.Column(db.Text, unique=True, nullable=False)
-    # password = db.Column(db.Text, nullable=False)
-    # image_file = db.Column(db.Text, nullable=False, default='default.jpg')
-    # #
+ #   __tablename__ = "user"
+ #   id = db.Column(db.Integer, primary_key=True)
+ #   username = db.Column(db.Text, nullable=False)
+ #   email = db.Column(db.Text, unique=True, nullable=False)
+ #   password = db.Column(db.Text, nullable=False)
+ #   image_file = db.Column(db.Text, nullable=False, default='default.jpg')
+
     __table__ = db.Model.metadata.tables['user']
 
     def __repr__(self):
@@ -60,11 +59,11 @@ class Fundamentals(db.Model):
 
 
 class Profile(db.Model):
-    # __tablename__ = "profile"
-    # id = db.Column(db.Integer, primary_key=True)
-    # username = db.Column(db.Text, unique=True, nullable=False)
-    # bio = db.Column(db.Text)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+   #  __tablename__ = "profile"
+   #  id = db.Column(db.Integer, primary_key=True)
+   #  username = db.Column(db.Text, unique=True, nullable=False)
+   #  bio = db.Column(db.Text)
+   #  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     __table__ = db.Model.metadata.tables['profile']
 

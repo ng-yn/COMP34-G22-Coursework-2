@@ -9,6 +9,7 @@ import pytest
 
 
 class Testmyapp:
+
     def test_home_page_valid(self, client):
         """
         GIVEN a Flask application is running
