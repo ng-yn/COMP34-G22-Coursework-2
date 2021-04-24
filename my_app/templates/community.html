@@ -22,15 +22,17 @@
     </h6>
 {% for post in posts %}
         <hr>
-        <a href="{{ url_for('community_bp.post', post_id=post['id']) }}">
-            <button class="btn btn-secondary">
-                <h5>{{ post['title'] }}</h5>
-            </button>
-        </a>
-        <span class="badge badge-primary">{{ post['created'] }}</span>
-        <a href="{{ url_for('community_bp.edit', post_id=post['id']) }}">
-            <span class="badge badge-warning">Edit</span>
-        </a>
+        <div name={{ post['title'] }}>
+            <h5>
+                <a href="{{ url_for('community_bp.post', post_id=post['id']) }}">
+                <button class="btn btn-secondary">{{ post['title'] }}</button>
+                </a>
+            </h5>
+            <span class="badge badge-primary">{{ post['created'] }}</span>
+            <a href="{{ url_for('community_bp.edit', post_id=post['id']) }}">
+                <span class="badge badge-warning">Edit</span>
+            </a>
+        </div>
 {% endfor %}
 {% endblock %}
 </body>
