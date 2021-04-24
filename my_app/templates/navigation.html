@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a id="HomePage" class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/index">S&P 500 Index</a>
@@ -29,7 +29,7 @@
                 {% endif %}
                 {% if current_user.is_anonymous %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/login">Log In/Sign Up</a>
+                    <a id="LoginPage" class="nav-link" href="/login">Log In/Sign Up</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
