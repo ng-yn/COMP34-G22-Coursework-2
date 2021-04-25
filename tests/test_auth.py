@@ -166,26 +166,62 @@ class CommunityTests(unittest.TestCase):
         db.session.remove()
         # db.drop_all()
 
-    def signup(self):
+    def signup(self, username, email, password, password_repeat):
+        """ Signup Function """
         self.driver.get(self.local_test_url + '/signup')
-        self.driver.find_element_by_id("username").send_keys(self.test_account1['username'])
-        self.driver.find_element_by_id("email").send_keys(self.test_account1['email'])
-        self.driver.find_element_by_id("password").send_keys(self.test_account1['password'])
-        self.driver.find_element_by_id("password_repeat").send_keys(self.test_account1['password_repeat'])
+        self.driver.find_element_by_id("username").send_keys(username)
+        self.driver.find_element_by_id("email").send_keys(email)
+        self.driver.find_element_by_id("password").send_keys(password)
+        self.driver.find_element_by_id("password_repeat").send_keys(password_repeat)
         self.driver.find_element_by_css_selector('form .btn-primary').click()
         self.driver.implicitly_wait(3)
 
-    def login(self):
+    def login(self, username, password):
         self.driver.get(self.local_test_url + '/login')
-        self.driver.find_element_by_id("email").send_keys(self.test_account2['username'])
-        self.driver.find_element_by_id("password").send_keys(self.test_account2['password'])
+        self.driver.find_element_by_id("email").send_keys(username)
+        self.driver.find_element_by_id("password").send_keys(password)
         self.driver.find_element_by_css_selector('form .btn-primary').click()
         self.driver.implicitly_wait(3)
 
-    def test_signup(self):
-        self.driver.get(self.local_test_url + '/signup')
+    def test_login_required(self):
+        self.driver.get('/watchlist')
+        self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
+        self.driver.get('/community')
+        self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
+        self.driver.get('/profile')
+        self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
+        self.driver.get('/logout')
+        self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
+
+    def test_signup_succeeds(self):
+        self.signup('testuser1', 'testuser1@gmail.com', 'password1', 'password1')
         self.assertTrue('Hello, testuser1. You have successfully signed up. Please login to continue.' in self.driver.page_source)
 
+    def test_signup_fails(self):
+        self.signup('testuser2', 'testuser1@gmail.com', 'password1', 'password1')
+        self.assertTrue('An account is already registered for that email address' in self.driver.page_source)
+        self.signup('testuser2', 'testuser2@gmail.com', 'pas', 'pas')
+        self.assertTrue('Password must be between 4-16 characters long' in self.driver.page_source)
+        self.signup('testuser2', 'testuser2@gmail.com', 'passwordpassword1', 'passwordpassword1')
+        self.assertTrue('Password must be between 4-16 characters long' in self.driver.page_source)
+        self.signup('testuser2', 'testuser2@gmail.com', 'password', 'password1')
+        self.assertTrue('Passwords must match' in self.driver.page_source)
+
+    def test_login_succeeds(self):
+        self.login('test@test.com', 'potato')
+        self.assertTrue('You have successfully logged in.' in self.driver.page_source)
+
+    def test_login_fails(self):
+        self.login('test@test.com1', 'potato')
+        self.assertTrue('This email address is not registered' in self.driver.page_source)
+        self.login('test@test.com', 'potato1')
+        self.assertTrue('The password is incorrect' in self.driver.page_source)
+
+    def test_logout(self):
+        self.login()
+        self.assertTrue('You have successfully logged in.' in self.driver.page_source)
+        self.driver.get('/logout')
+        self.assertTrue('You have successfully logged out.' in self.driver.page_source)
 
 
 
