@@ -11,7 +11,7 @@ chrome_options = Options()
 chrome_options.add_experimental_option("detach", False)  # Change this to true to debug
 
 
-class WatchlistTests(unittest.TestCase):
+class SearchTests(unittest.TestCase):
     local_test_url = 'http://localhost:5000'
 
     def setUp(self):
