@@ -184,18 +184,15 @@ class CommunityTests(unittest.TestCase):
         self.driver.implicitly_wait(3)
 
     def test_login_required(self):
-        self.driver.get('/watchlist')
+        self.driver.get(self.local_test_url + '/watchlist')
         self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
-        self.driver.get('/community')
+        self.driver.get(self.local_test_url + '/community')
         self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
-        self.driver.get('/profile')
+        self.driver.get(self.local_test_url + '/profile')
         self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
-        self.driver.get('/logout')
-        self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
+        # self.driver.get(self.local_test_url + '/logout')
+        # self.assertTrue('You must be logged in to view that page.' in self.driver.page_source)
 
-    def test_signup_succeeds(self):
-        self.signup('testuser1', 'testuser1@gmail.com', 'password1', 'password1')
-        self.assertTrue('Hello, testuser1. You have successfully signed up. Please login to continue.' in self.driver.page_source)
 
     def test_signup_fails(self):
         self.signup('testuser2', 'testuser1@gmail.com', 'password1', 'password1')
@@ -206,6 +203,16 @@ class CommunityTests(unittest.TestCase):
         self.assertTrue('Password must be between 4-16 characters long' in self.driver.page_source)
         self.signup('testuser2', 'testuser2@gmail.com', 'password', 'password1')
         self.assertTrue('Passwords must match' in self.driver.page_source)
+
+    def test_signup_succeeds(self):
+        self.driver.get(self.local_test_url + '/signup')
+        self.driver.find_element_by_id("username").send_keys('testuser1')
+        self.driver.find_element_by_id("email").send_keys('testuser1@gmail.com')
+        self.driver.find_element_by_id("password").send_keys('password1')
+        self.driver.find_element_by_id("password_repeat").send_keys('password1')
+        self.driver.find_element_by_css_selector('form .btn-primary').click()
+        self.driver.implicitly_wait(3)
+        self.assertTrue('Hello, testuser1. You have successfully signed up. Please login to continue.' in self.driver.page_source)
 
     def test_login_succeeds(self):
         self.login('test@test.com', 'potato')
@@ -218,9 +225,9 @@ class CommunityTests(unittest.TestCase):
         self.assertTrue('The password is incorrect' in self.driver.page_source)
 
     def test_logout(self):
-        self.login('test@test.com1', 'potato')
+        self.login('test@test.com', 'potato')
         self.assertTrue('You have successfully logged in.' in self.driver.page_source)
-        self.driver.get('/logout')
+        self.driver.get(self.local_test_url + '/logout')
         self.assertTrue('You have successfully logged out.' in self.driver.page_source)
 
 
