@@ -38,12 +38,12 @@ def search():
         if term == "":
             flash("Enter a label to search for")
             return redirect(url_for('snp500_bp.index'))
-        plotly_graph_object()
-        results = Fundamentals.query.filter_by(Symbol=term).first()
         ticker = [item.Symbol for item in Fundamentals.query.all()]
         if term not in ticker:
             flash("No symbol found with that company symbol")
             return redirect(url_for('snp500_bp.index'))
+        plotly_graph_object()
+        results = Fundamentals.query.filter_by(Symbol=term).first()
         return render_template("search_result.html", title=str(term), results=results)
     else:
         return redirect(url_for('snp500_bp.index'))
