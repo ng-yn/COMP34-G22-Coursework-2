@@ -24,7 +24,7 @@ class SearchTests(unittest.TestCase):
         db.session.remove()
         # db.drop_all()
 
-    def test_search(self):
+    def test_search_valid(self):
         """
         GIVEN a user that is using the web application
         WHEN they visit the index page, searching for a company label
@@ -36,3 +36,19 @@ class SearchTests(unittest.TestCase):
         self.driver.find_element_by_id("autocomplete_tickers").send_keys('FB')
         self.driver.find_element_by_xpath('//button[text()="Search"]').click()
         self.assertTrue('FB' in self.driver.page_source)
+
+    def test_search_invalid(self, client):
+        """
+        GIVEN a user that is using the web application
+        WHEN they visit the index page, searching for a invalid company label
+        THEN as the search request is send, a error flash will pop out
+        """
+        with client.session_transaction() as session:
+            flash_message = dict(session['_flashes']).get('warning')
+
+        expected_flash_message = 'No symbol found with that company symbol'
+        # Visit s&p 500 page
+        self.driver.get(self.local_test_url + '/index')
+        self.driver.find_element_by_id("autocomplete_tickers").send_keys('xxx')
+        self.driver.find_element_by_xpath('//button[text()="Search"]').click()
+        self.assertEqual(flash_message,expected_flash_message)
