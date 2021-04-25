@@ -34,17 +34,16 @@ def autocomplete_tickers():
 @snp500_bp.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
-        term = request.form['autocomplete_tickers']
+        term = request.form.get('autocomplete_tickers')
         if term == "":
             flash("Enter a label to search for")
             return redirect(url_for('snp500_bp.index'))
+        ticker = [item.Symbol for item in Fundamentals.query.all()]
+        if term not in ticker:
+            flash("No symbol found with that company symbol")
+            return redirect(url_for('snp500_bp.index'))
         plotly_graph_object()
         results = Fundamentals.query.filter_by(Symbol=term).first()
-
-        # figure = plotly_graph_object(str(term), 300)
-        if not results:
-            flash("No symbol found with that name")
-            return redirect(url_for('snp500_bp.index'))
         return render_template("search_result.html", title=str(term), results=results)
     else:
         return redirect(url_for('snp500_bp.index'))

@@ -13,6 +13,7 @@ community_bp = Blueprint('community_bp', __name__, url_prefix='/community')
 @login_required
 def index():
     posts = Posts.query.all()
+    posts.reverse()
     users = User.query.all()
     return render_template('community.html', title='Welcome to the Community Section', posts=posts, users=users)
 
