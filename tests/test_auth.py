@@ -218,7 +218,7 @@ class CommunityTests(unittest.TestCase):
         self.assertTrue('The password is incorrect' in self.driver.page_source)
 
     def test_logout(self):
-        self.login()
+        self.login('test@test.com1', 'potato')
         self.assertTrue('You have successfully logged in.' in self.driver.page_source)
         self.driver.get('/logout')
         self.assertTrue('You have successfully logged out.' in self.driver.page_source)
