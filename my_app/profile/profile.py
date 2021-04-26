@@ -1,26 +1,23 @@
 # Profile page
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-
-import my_app
 from my_app import db
 from my_app.profile.forms import ProfileForm
 from my_app.models import Profile, User, Posts
-import secrets, os
+import secrets
+import os
 
 profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
-
-
-# @profile_bp.route('/')
-# @login_required
-# def index():
-#     form = ProfileForm()
-#     return render_template('profile.html', title="Profile", form=form)
 
 
 @profile_bp.route('/', methods=['POST', 'GET'])
 @login_required
 def profile():
+    """
+    Returns either the update or create profile page depending on whether or not the user has made a profile
+    """
+
+    # Tries to find the profile of the current user from the db
     profile = Profile.query.join(User).filter(User.id == current_user.id).first()
     if profile:
         return redirect(url_for('profile.update_profile'))
@@ -31,13 +28,20 @@ def profile():
 @profile_bp.route('/create_profile', methods=['POST', 'GET'])
 @login_required
 def create_profile():
+    """
+    Returns the page to create a new profile
+    """
+
+    # The 'ProfileForm()' from forms.py is used to create a new profile
     form = ProfileForm()
+
+    # When the form is submitted the form data is used to create a new profile and committed to the db
     if request.method == 'POST' and form.validate_on_submit():
         p = Profile(username=form.username.data, bio=form.bio.data, user_id=current_user.id, image_file='default.jpg')
         db.session.add(p)
         db.session.commit()
-        flash('Profile created.')
-        return redirect(url_for('profile.profile', username=p.username))
+        flash('Profile created.')  # A success message is flashed
+        return redirect(url_for('profile.profile', username=p.username))  # The page for the new profile is returned
     return render_template('/newprofile.html', form=form)
 
 
@@ -53,6 +57,9 @@ def save_picture(form_picture):
 @profile_bp.route('/update_profile', methods=['POST', 'GET'])
 @login_required
 def update_profile():
+    """
+    Returns the page to update a profile
+    """
     profile = Profile.query.join(User).filter_by(id=current_user.id).first()
     form = ProfileForm(obj=profile)
     if request.method == 'POST' and form.validate_on_submit():
@@ -69,31 +76,17 @@ def update_profile():
     return render_template('profile.html', form=form, username=profile.username, userimage=image_file)
 
 
-# @profile_bp.route('/display_profiles', methods=['POST', 'GET'])
-# @profile_bp.route('/display_profiles/<username>', methods=['POST', 'GET'])
-# @login_required
-# def display_profiles(username=None):
-#     results = None
-#     if username is None:
-#         if request.method == 'POST':
-#             term = request.form['search_term']
-#             if term == "":
-#                 flash("Enter a name to search for")
-#                 return redirect(url_for("profile.profile"))
-#             results = Profile.query.filter(Profile.username.contains(term)).all()
-#     else:
-#         results = Profile.query.filter_by(username=username).all()
-#     if results is None:
-#         flash("Username not found.")
-#         return redirect(url_for("profile.profile"))
-#     return render_template('display_profile.html', profiles=results)
-
 @profile_bp.route('/display_profiles', methods=['POST', 'GET'])
 @login_required
 def display_profiles():
+    """
+    Returns the page displaying profiles that match the search terms in the profile search bar
+    """
     results = None
     if request.method == 'POST':
         search_term = request.form['search_term']
+
+        # Ensures that there is a search term in the search bar
         if search_term == '':
             flash("Please enter a username to search for.")
             return redirect(url_for("community_bp.index"))
@@ -109,6 +102,8 @@ def display_profiles():
 @profile_bp.route('/<username>')
 @login_required
 def user_profile(username):
+    """ Returns the page for a specific user profile given the username
+    """
     user = username
     exists = Profile.query.filter(Profile.username == user).first()
     if exists:
@@ -119,5 +114,3 @@ def user_profile(username):
     else:
         flash("That user does not exist")
         return redirect((url_for('community_bp.index')))
-
-
