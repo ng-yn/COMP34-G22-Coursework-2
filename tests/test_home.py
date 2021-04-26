@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from my_app import create_app, db, config
 from selenium.webdriver.common.by import By
+
 # So that chrome does not close instantly after test finishes, for debugging purposes
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", False)  # Change this to true to debug
@@ -17,6 +18,7 @@ class HomePageTests(unittest.TestCase):
     }
 
     def setUp(self):
+        #setup the application and client
         app = create_app(config.TestingConfig)
         self.app = app.test_client()
         db.create_all()
@@ -24,18 +26,18 @@ class HomePageTests(unittest.TestCase):
 
     def tearDown(self):
         db.session.remove()
-        # db.drop_all()
+        # db.drop_all() #This will wipe the database
 
     def coming_from_a_different_page(self):
-        """
-        coming from a different page- taking the driver to a different page
-        """
+        # Coming from a different page- taking the driver to a different page
+        # Create a function that we can call in future tests (avoid repititon)
         self.driver.get(self.local_test_url)
         self.driver.find_element_by_id('LoginPage').click()
         self.driver.find_element_by_id('HomePage').click()
         self.driver.implicitly_wait(3)
 
     def test_homepage_buttom(self):
+        # testing Home route
         """
         GIVEN: User (Not Logged) is on any page e.g Login page
         WHEN: Click Home Button
@@ -48,7 +50,7 @@ class HomePageTests(unittest.TestCase):
         """
         GIVEN: User (Not Logged) is on any page e.g Login
         WHEN: Click the scroll Button
-        THEN: It scroll the page down
+        THEN: It scroll the page down to the options
         """
         self.coming_from_a_different_page()
         self.driver.implicitly_wait(5)
@@ -60,13 +62,12 @@ class HomePageTests(unittest.TestCase):
     def test_Technical_Analysis_url_link(self):
         """
         GIVEN: User (Logged in or not) is on any page
-        WHEN:  Click the explain more on Technical Analysis
+        WHEN:  Click the explain Technical Analysis button
         THEN:  It will take you to the appropriate link
         """
         self.TAL = "https://www.investopedia.com/articles/active-trading/102914/technical-analysis-strategies-beginners.asp"
         self.coming_from_a_different_page()
         self.driver.implicitly_wait(5)
-        #self.driver.find_element_by_id('TAL').click()
         try:
             self.driver.find_element_by_link_text('Explain Technical Analysis').click()
         except:
@@ -79,12 +80,16 @@ class HomePageTests(unittest.TestCase):
     def test_Fundamental_Analysis_url_link(self):
         """
         GIVEN: User (Logged in or not) is on any page
-        WHEN:  Click the explain more on Technical Analysis
+        WHEN:  Click the explain Fundamental Analysis
         THEN:  It will take you to the appropriate link
         """
+        #define destination link
         self.FAL = "https://www.investopedia.com/terms/f/fundamentalanalysis.asp"
+
         self.coming_from_a_different_page()
         self.driver.implicitly_wait(5)
+
+        # if try is not used it doesnt work properly - its a turnaround
         try:
             self.driver.find_element_by_link_text('Explain Fundamental Analysis').click()
         except:
@@ -102,6 +107,10 @@ class HomePageTests(unittest.TestCase):
         self.WAL = "https://www.investopedia.com/terms/w/watchlist.asp"
         self.coming_from_a_different_page()
         self.driver.implicitly_wait(5)
+
+        # if try is not used it doesnt work properly - its a turnaround
+        # applied 3 different ways of locating the element - alone they dont work
+
         try:
             self.driver.find_element_by_link_text('Explain Watchlist').click()
         except:
@@ -113,11 +122,13 @@ class HomePageTests(unittest.TestCase):
     def test_all_links(self):
         """
         GIVEN: User (Logged in or not) is on any page
-        WHEN:  Click each button
-        THEN:  It will take you to the appropriate link
+        WHEN:  Click each button back to back
+        THEN:  It will take you to the appropriate link without crashing return back and got to the next
         """
         self.coming_from_a_different_page()
         self.driver.implicitly_wait(3)
+
+        # if try is not used it doesnt work properly - its a turnaround
         try:
             self.driver.find_element_by_link_text('Explain Technical Analysis').click()
         except:
