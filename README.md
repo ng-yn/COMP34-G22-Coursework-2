@@ -1,6 +1,6 @@
 # coursework-2-groups-group-22-comp0034 
 
-Team Members
+Team Members:
 
 Ng, Yat Nam
 
@@ -12,5 +12,6 @@ Williams, Luke
 
 Chen, Yu-Hsiang
 
-Video Link:
+
+# Video Link:
 http://youtu.be/en3tit762t0
